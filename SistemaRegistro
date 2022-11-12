@@ -1,0 +1,97 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+
+using namespace std;
+
+struct menu{
+    int Id_menu;
+    string Nombre;
+    float Precio;
+    int Cant_vend;
+}; 
+
+struct  PizzaArbol {
+menu * info; 
+struct PizzaArbol * izq, * der;
+};
+
+
+
+PizzaArbol* arbol_crea(menu* v, PizzaArbol* i, PizzaArbol* d)
+{
+    PizzaArbol* p = (PizzaArbol*)malloc(sizeof(PizzaArbol)); 
+    p->info = v; 
+    p->izq = i; 
+    p->der = d;  
+    return p; 
+}
+
+int arbol_vacio(PizzaArbol* a)  {
+    return a == NULL; 
+    
+}
+
+void arbol_imprime(PizzaArbol * a)  {
+    if (!arbol_vacio(a)){
+        cout<<"El ID es:"<<a->info->Id_menu<<endl; 
+        cout<<"El nombre es:"<<a->info->Nombre<<endl; 
+        cout<<"El precio es:"<<a->info->Precio<<endl; 
+        cout<<"La cantidad vendida es:"<<a->info->Cant_vend<<endl; 
+        cout<<endl;
+        arbol_imprime(a->izq); 
+        arbol_imprime(a->der);
+    }
+}
+
+PizzaArbol* arbol_libera(PizzaArbol* a)  {
+    if (!arbol_vacio(a)){ 
+        arbol_libera(a->izq); 
+        arbol_libera(a->der);
+        free(a);  
+        }
+    return NULL; 
+}
+
+
+
+float sumaVentas(PizzaArbol* a){ 
+    int s = 0.0;
+    if (arbol_vacio(a))  
+        return 0;  
+    if (!arbol_vacio(a)){
+        s = s + a->info->Cant_vend; 
+        s = s + sumaVentas(a->izq); 
+        s = s + sumaVentas(a->der);
+    }
+    else{
+        cout<<"Error";
+    }
+    return s;
+}
+
+
+
+int main()
+{
+    menu q = {1001,"Pizza americana",15.50,23};
+    menu e = {1002,"Pizza peperonni",17.50,42};
+    menu r = {1003,"Pizza hawaiana",12.50,32};
+    menu y = {1004,"Pizza carne",22.50,38};
+    menu u = {1005,"Pizza vegetariana",15.50,23};
+    menu i = {1006,"Pizza P&J",24.50,60};
+    PizzaArbol * a= arbol_crea(&q,
+    arbol_crea(&e,NULL,arbol_crea(&r,NULL,NULL)),
+    arbol_crea(&y,arbol_crea(&u,NULL,NULL),arbol_crea(&i,NULL,NULL))
+    );
+    arbol_imprime(a);
+    float ventas = sumaVentas(a);
+    cout<<"las ventas totales fueron: "<<ventas;
+   
+    
+    
+
+    return 0;
+}
+
+
